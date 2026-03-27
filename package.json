@@ -1,0 +1,14 @@
+{
+  "name": "mobile-booking",
+  "version": "1.0.0",
+  "description": "Clinic queue booking system with AI",
+  "scripts": {
+    "dev": "concurrently \"npm run dev:backend\" \"npm run dev:frontend\"",
+    "dev:backend": "cd application && npm run dev",
+    "dev:frontend": "cd presentation && npm run start",
+    "install:all": "npm install && cd application && npm install && cd ../presentation && npm install"
+  },
+  "devDependencies": {
+    "concurrently": "^8.2.2"
+  }
+}

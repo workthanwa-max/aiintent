@@ -1,0 +1,47 @@
+# Dependencies
+node_modules/
+application/node_modules/
+presentation/node_modules/
+
+# Environment
+.env
+.env.local
+.env.*.local
+application/.env
+
+# Database
+application/data/*.sqlite
+application/data/*.sqlite-journal
+
+# IDEs and OS
+.DS_Store
+.idea/
+.vscode/
+*.swp
+*.swo
+
+# Expo
+presentation/.expo/
+presentation/dist/
+presentation/web-build/
+presentation/expo-env.d.ts
+
+# Metro/Debug
+presentation/.metro-health-check*
+npm-debug.*
+yarn-debug.*
+yarn-error.*
+
+# Native
+presentation/ios/
+presentation/android/
+*.jks
+*.p8
+*.p12
+*.key
+*.mobileprovision
+
+# Build outputs
+dist/
+build/
+*.tsbuildinfo
