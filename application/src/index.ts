@@ -28,13 +28,25 @@ app.post('/api/categories', categoryController.addCategory);
 app.put('/api/categories/:id', categoryController.toggleCategory);
 app.delete('/api/categories/:id', categoryController.deleteCategory);
 
-// Staff Dashboard Data
-app.get('/api/queues/today', (req, res) => {
+// Staff Dashboard Data - Now showing all active/future queues
+app.get('/api/queues/active', (req, res) => {
     const today = new Date().toISOString().split('T')[0];
-    db.all('SELECT q.*, u.name as customer_name FROM queues q JOIN users u ON q.customer_id = u.username WHERE booking_date = ? ORDER BY queue_number ASC', [today], (err, rows) => {
+    db.all(`
+        SELECT q.*, u.name as customer_name 
+        FROM queues q 
+        JOIN users u ON q.customer_id = u.username 
+        WHERE q.status != 'CANCELLED' 
+        AND q.booking_date >= ?
+        ORDER BY q.booking_date ASC, q.queue_number ASC
+    `, [today], (err, rows) => {
         if (err) return res.status(500).json({ error: err.message });
         res.json(rows);
     });
+});
+
+// Keep legacy today endpoint for compatibility if needed, but pointing to the same logic
+app.get('/api/queues/today', (req, res) => {
+    res.redirect('/api/queues/active');
 });
 
 app.listen(port, () => {

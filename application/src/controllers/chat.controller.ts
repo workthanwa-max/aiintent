@@ -15,10 +15,17 @@ export const handleChat = async (req: any, res: any) => {
   // 2. Prepare Context
   const today = new Date().toISOString().split('T')[0];
   const occupiedSlots = await QueueService.getOccupiedSlots(today);
+  
+  // Fetch current user's real name
+  const userData: any = await new Promise((resolve) => {
+    db.get('SELECT name FROM users WHERE username = ?', [username], (err, row) => resolve(row));
+  });
+
   const context = {
     currentTime: new Date().toLocaleString('th-TH'),
     occupiedSlots,
-    date: today
+    date: today,
+    userName: userData?.name || ''
   };
 
   // 3. Load active service categories for AI context
@@ -54,9 +61,21 @@ export const handleChat = async (req: any, res: any) => {
     const parsed = JSON.parse(rawAiResponse);
     replyText = parsed.reply || replyText;
     action = parsed.action || { type: 'NONE' };
+
+    // Update user's real name if provided by AI
+    if (action.name && action.name.trim().length > 0) {
+      console.log(`[Chat] Updating name for ${username} to: ${action.name}`);
+      db.run('UPDATE users SET name = ? WHERE username = ?', [action.name, username]);
+    }
   } catch (e) {
     console.error('[Chat] Failed to parse AI JSON, raw:', rawAiResponse?.substring(0, 200));
-    if (rawAiResponse && rawAiResponse.length < 400 && !rawAiResponse.startsWith('{')) {
+    
+    // Fallback: Try to extract only "reply" using regex if JSON parse fails
+    const replyMatch = rawAiResponse.match(/"reply"\s*:\s*"([^"]+)"/);
+    if (replyMatch && replyMatch[1]) {
+      replyText = replyMatch[1];
+      console.log('[Chat] Rescued reply via regex:', replyText);
+    } else if (rawAiResponse && rawAiResponse.length < 500 && !rawAiResponse.includes('{')) {
       replyText = rawAiResponse;
     } else {
       replyText = 'ขออภัยค่ะ ระบบเกิดข้อผิดพลาดชั่วคราว กรุณาลองพิมพ์ใหม่อีกครั้งนะคะ';

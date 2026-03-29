@@ -197,7 +197,7 @@ export default function StaffDashboard({ user, onLogout }: StaffDashboardProps) 
 
       <View style={styles.tabContainer}>
         <TouchableOpacity style={[styles.tab, activeTab === 'queues' && styles.activeTab]} onPress={() => setActiveTab('queues')} activeOpacity={0.8}>
-          <Text style={[styles.tabText, activeTab === 'queues' && styles.activeTabText]}>คิววันนี้</Text>
+          <Text style={[styles.tabText, activeTab === 'queues' && styles.activeTabText]}>รายการคิว</Text>
         </TouchableOpacity>
         <TouchableOpacity style={[styles.tab, activeTab === 'categories' && styles.activeTab]} onPress={() => setActiveTab('categories')} activeOpacity={0.8}>
           <Text style={[styles.tabText, activeTab === 'categories' && styles.activeTabText]}>จัดการบริการ</Text>
@@ -217,7 +217,7 @@ export default function StaffDashboard({ user, onLogout }: StaffDashboardProps) 
             {queues.length === 0 ? (
               <View style={styles.emptyContainer}>
                 <Text style={styles.emptyIcon}>📅</Text>
-                <Text style={styles.emptyText}>ยังไม่มีรายการคิววันนี้</Text>
+                <Text style={styles.emptyText}>ยังไม่มีรายการคิวขณะนี้</Text>
               </View>
             ) : (
               queues.map(q => (
@@ -229,7 +229,7 @@ export default function StaffDashboard({ user, onLogout }: StaffDashboardProps) 
                   </View>
                   <View style={styles.cardCenter}>
                     <Text style={styles.patientName}>{q.customer_name}</Text>
-                    <Text style={styles.cardSubtitle}>{q.booking_time || 'ไม่ระบุเวลา'}</Text>
+                    <Text style={styles.cardSubtitle}>{q.booking_date} • {q.booking_time || 'ไม่ระบุเวลา'}</Text>
                     <Text style={styles.symptoms} numberOfLines={1}>{q.symptoms || '— ไม่ระบุอาการ —'}</Text>
                   </View>
                   <View style={styles.cardRight}>
